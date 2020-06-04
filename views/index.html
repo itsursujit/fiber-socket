@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+
+    <script type = "text/javascript">
+        // dec2hex :: Integer -> String
+        // i.e. 0-255 -> '00'-'ff'
+        function dec2hex (dec) {
+            return ('0' + dec.toString(16)).substr(-2)
+        }
+
+        // generateId :: Integer -> String
+        function generateId (len) {
+            var arr = new Uint8Array((len || 40) / 2)
+            window.crypto.getRandomValues(arr)
+            return Array.from(arr, dec2hex).join('')
+        }
+
+        function WebSocketTest() {
+
+            if ("WebSocket" in window) {
+                var id = generateId()
+                // Let us open a web socket
+                var ws = new WebSocket("ws://localhost:3021/ws?user_id=tdkfYBKOhbCWspdcP5ykUqxguzDntKq9");
+
+                ws.onopen = function() {
+
+                    // Web Socket is connected, send data using send()
+                    ws.send("Message to send");
+                    alert("Message is sent...");
+                };
+
+                ws.onmessage = function (evt) {
+                    var received_msg = evt.data;
+                    alert("Message is received...");
+                };
+
+                ws.onclose = function() {
+
+                    // websocket is closed.
+                    alert("Connection is closed...");
+                };
+            } else {
+
+                // The browser doesn't support WebSocket
+                alert("WebSocket NOT supported by your Browser!");
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+<div id = "sse">
+    {{.id}}
+    <a href = "javascript:WebSocketTest()">Run WebSocket</a>
+</div>
+
+</body>
+</html>
